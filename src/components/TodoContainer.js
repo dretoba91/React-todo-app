@@ -81,6 +81,7 @@ class TodoContainer extends Component {
           deleteTodoProps={this.deleteTodo}
         />
         <InputTodo addTodoProps={this.addTodoItem} />
+        <TodoLists todos={this.state.todos} />
       </div>
     );
   }
