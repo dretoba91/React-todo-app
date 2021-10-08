@@ -7,25 +7,7 @@ import TodoLists from "./TodoLists";
 class TodoContainer extends Component {
   // Creating a State
   state = {
-    todos: [
-      {
-        id: uuidv4(),
-        title: "Setup development environment",
-        completed: true,
-      },
-
-      {
-        id: uuidv4(),
-        title: "Develop website and add content",
-        completed: false,
-      },
-
-      {
-        id: uuidv4(),
-        title: "Deploy to live server",
-        completed: false,
-      },
-    ],
+    todos: [],
   };
 
   // handleChange is the event to cause the the change.
@@ -71,17 +53,59 @@ class TodoContainer extends Component {
     });
   };
 
+  // this will enable us to edit the TodoItems by passing this as props.
+  setUpdate = (updatedTitle, id) => {
+    this.setState({
+      todos: this.state.todos.map((todo) => {
+        if (todo.id === id) {
+          todo.title = updatedTitle;
+        }
+        return todo;
+      }),
+    });
+  };
+
+  /*
+  // we want to mount(insert) todo datas from a REST API. we make use of the fetch() to fetch data from the jsonplaceholder API and limit data to 10.
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+      .then((response) => response.json())
+      .then((data) => this.setState({ todos: data }));
+  }
+  */
+
+  // we will get the stored item(s) and add back to the  after rendering, once component mount
+  componentDidMount() {
+    const temp = localStorage.getItem("todos");
+    const loadTodos = JSON.parse(temp);
+    if (loadTodos) {
+      this.setState({
+        todos: loadTodos,
+      });
+    }
+  }
+
+  // Whenever our application mounts on the screen and the user interact with the app by inputting the to-dos data, we will save the to-dos item(s) in the local storage.
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.todos !== this.state.todos) {
+      const temp = JSON.stringify(this.state.todos);
+      localStorage.setItem("todos", temp);
+    }
+  }
+
   render() {
     return (
-      <div>
-        <Header />
-        <TodoLists
-          todos={this.state.todos}
-          handleChangeProps={this.handleChange}
-          deleteTodoProps={this.deleteTodo}
-        />
-        <InputTodo addTodoProps={this.addTodoItem} />
-        <TodoLists todos={this.state.todos} />
+      <div className="container">
+        <div className="inner">
+          <Header />
+          <TodoLists
+            todos={this.state.todos}
+            handleChangeProps={this.handleChange}
+            deleteTodoProps={this.deleteTodo}
+            setUpdateForEditing={this.setUpdate}
+          />
+          <InputTodo addTodoProps={this.addTodoItem} />
+        </div>
       </div>
     );
   }

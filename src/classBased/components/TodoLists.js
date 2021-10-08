@@ -11,6 +11,7 @@ class TodoLists extends Component {
             todo={todo}
             childHandleChangeProps={this.props.handleChangeProps}
             childDeleteTodoProps={this.props.deleteTodoProps}
+            setUpdateForEditingItems={this.props.setUpdateForEditing}
           />
         ))}
       </ul>
